@@ -1,0 +1,79 @@
+# Autor: Josue Rivas Muñoz
+# Version 0.1
+version: '3.9'
+services:
+## BASE DE DATOS POSTGRESQL.
+  postgres:
+    container_name: postgres_container
+    image: postgres:14.4
+    environment:
+      POSTGRES_USER: public_user
+      POSTGRES_PASSWORD: pDb23*9Hsa
+      POSTGRES_DB: base
+      TZ: 'America/Costa_Rica'
+      PGTZ: 'America/Costa_Rica'
+    ports:
+        - '5432:5432'
+    restart: always
+    volumes:
+      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
+      - 'postgres-data:/var/lib/postgresql/data/'
+    networks:
+      - proyecto-net
+
+## Administrador de la base de datos por medio de pgadmin: https://www.pgadmin.org/download/
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4:6.11
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-base@mail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-H21mds$0F}
+      TZ: 'America/Costa_Rica'
+    volumes:
+      - './dbbackups:/var/lib/pgadmin/dbbackups'
+      - 'pgadmin-data:/root/.pgadmin'
+    ports:
+      - '5454:80'
+    networks:
+      - proyecto-net
+    restart: always
+    depends_on:
+      - postgres
+
+## KEYCLOAK ##
+# keycloak:
+#    container_name: keycloak_container
+#    image: quay.io/keycloak/keycloak:latest
+#    environment:
+#      DB_VENDOR: postgres
+#      DB_ADDR: postgres_container
+#      DB_PORT: 5432
+#      DB_DATABASE: base
+#      DB_SCHEMA: keycloak_admin # validar en el archivo init.sql
+#      DB_USER: public_user
+#      DB_PASSWORD: pDb23*9Hsa
+#      # KEYCLOAK_USER: kc_admin
+#      # KEYCLOAK_PASSWORD: kc_J21aq5A
+#      PROXY_ADDRESS_FORWARDING: 'true'
+#      TZ: 'America/Costa_Rica'
+#      # JDBC_PARAMS: "ssl=true"
+#    ports:
+#      - '9090:8080'
+#    networks:
+#      - proyecto-net
+#    restart: always
+#    depends_on:
+#      - postgres
+#    volumes:
+#      # - './themes:/opt/jboss/keycloak/themes' # La ruta de temas debe ser activada unicamente si ya se tiene el tema base configurado y en la carpeta, de lo contrario el contenedor no iniciará
+
+
+networks:
+  proyecto-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local
+  pgadmin-data:
+    driver: local

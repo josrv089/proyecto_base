@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    open-in-view: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+  # show-sql: true # solo para debug de consultas de hibernate
+  datasource:
+    # initialization-mode: always
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/base?currentSchema=proyecto_base
+    username: public_user
+    password: pDb23*9Hsa
+
